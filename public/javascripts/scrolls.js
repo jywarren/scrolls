@@ -1,9 +1,9 @@
-Scroll = {
+Scrolls = {
         initialize: function() {
                 this.element = $('canvas')
-                this.element.observe('mouseup',Scroll.on_mouseup)
-                this.element.observe('mousedown',Scroll.on_mousedown)
-                this.element.observe('mousemove',Scroll.on_mousemove)
+                this.element.observe('mouseup',Scrolls.on_mouseup)
+                this.element.observe('mousedown',Scrolls.on_mousedown)
+                this.element.observe('mousemove',Scrolls.on_mousemove)
                 this.canvas = this.element.getContext('2d');
                 $C = this.canvas
                 this.width = document.width
@@ -12,13 +12,12 @@ Scroll = {
                 this.element.style.height = this.height+"px"
                 this.element.width = this.width
                 this.element.height = this.height
-		setInterval(this.draw,500)
+		setInterval(Scrolls.draw,250)
         },
 	draw: function() {
-		for (i=0;i<this.width;i++) {
-	                pixels = $C.getImageData(i,y,this.height,1)
-	                //pixels.data[0] = Clash.colors[Clash.color][0]
-	                //$C.putImageData(pixels,i,y)
+		for (i=0;i<Scrolls.width;i++) {
+	                pixels = $C.getImageData(i+1,0,1,Scrolls.height)
+	                $C.putImageData(pixels,i,0)
 		}
 	},
 	on_mouseup: function(e) {
