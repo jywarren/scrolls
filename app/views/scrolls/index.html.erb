@@ -1,0 +1,17 @@
+<body>
+
+<h1>Scrolls</h1>
+
+<% @scrolls.each do |scroll| %>
+<div class="scroll"><a href="/scrolls/show/<%= scroll.id %>"><%= scroll.name %></a></div>
+<% end %>
+
+<form id="new" method="post" action="/scrolls/create">
+
+<input name="name" type="text" />
+
+<input value="Create" type="submit" />
+
+</form>
+
+</body>
