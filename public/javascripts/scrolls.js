@@ -1,6 +1,7 @@
 $.ajaxSetup ({ cache: false }); 
 var ajax_load = "<img src='/images/spinner-small.gif' alt='loading...' />";
 Scrolls = {
+	x_offset: 0,
 	initialize: function() {
 		this.element = $('#canvas')
 		this.element.mouseup(Scrolls.on_mouseup)
@@ -9,7 +10,8 @@ Scrolls = {
 		this.element.bind('touchend',Scrolls.on_mouseup)
 		this.element.bind('touchstart',Scrolls.on_mousedown)
 		this.element.bind('touchmove',Scrolls.on_mousemove)
-		this.canvas = this.element[0].getContext('2d');
+		this.element = $('#canvas')[0]
+		this.canvas = this.element.getContext('2d');
 		$C = this.canvas
 		this.width = 1024//document.width
 		this.height = 768//document.height
@@ -25,6 +27,7 @@ Scrolls = {
 			pixels = $C.getImageData(i+1,0,stripwidth,Scrolls.height)
 			$C.putImageData(pixels,i,0)
 		}
+		this.x_offset += 1
 	},
 	on_mouseup: function(e) {
 		self.mousedown = false
@@ -57,6 +60,10 @@ Scrolls = {
 			$C.stroke()
 		}
 	},
+	// fetch latest online canvas
+	update: function() {
+		// we can skip this for single-user mode
+	},
 	save: function() {
 		var url = "/scrolls/save/"+Page.scroll_id
 		// this isn't right... gotta parse the response and dump it into the pixel buffer
@@ -65,6 +72,9 @@ Scrolls = {
 		//options hash with params (dataUrl)
 	},
 	newest_panel: function() {
+		var x = Scrolls.width-100
+		var dataUrl = Scrolls.excerptCanvas(x,0,100,Scrolls.height,Scrolls.canvas)
+		console.log(dataUrl)
 		// pixels = $C.getImageData(x,y,1,1).data
 		//pixels.data[0] = Clash.colors[Clash.color][0]
 		//pixels.data[1] = Clash.colors[Clash.color][1]
@@ -77,8 +87,8 @@ Scrolls = {
 	excerptCanvas: function(x1,y1,x2,y2,source) {
 		source = source || $C
 		var width = x2-x1, height = y2-y1
-		$('body').insert("<canvas style='' id='excerptCanvas'></canvas>")
-		var element = $('excerptCanvas')
+		$('body').append("<canvas style='' id='excerptCanvas'></canvas>")
+		var element = $('#excerptCanvas')[0]
 		element.width = width
 		element.height = height
 		var excerptCanvasContext = element.getContext('2d')
