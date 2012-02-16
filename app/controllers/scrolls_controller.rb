@@ -7,6 +7,7 @@ class ScrollsController < ApplicationController
 
 	def show
 		@scroll = Scroll.find(params[:id])
+		
 	end
 
 	def save

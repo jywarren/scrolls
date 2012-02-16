@@ -1,20 +1,22 @@
 $.ajaxSetup ({ cache: false }); 
 var ajax_load = "<img src='/images/spinner-small.gif' alt='loading...' />";
 Scrolls = {
+	pointer_x: 0,
+	pointer_y: 0,
 	x_offset: 0,
 	initialize: function() {
 		this.element = $('#canvas')
-		this.element.mouseup(Scrolls.on_mouseup)
-		this.element.mousedown(Scrolls.on_mousedown)
-		this.element.mousemove(Scrolls.on_mousemove)
-		this.element.bind('touchend',Scrolls.on_mouseup)
-		this.element.bind('touchstart',Scrolls.on_mousedown)
-		this.element.bind('touchmove',Scrolls.on_mousemove)
+		$('body').mouseup(Scrolls.on_mouseup)
+		$('body').mousedown(Scrolls.on_mousedown)
+		$('body').mousemove(Scrolls.on_mousemove)
+		window.addEventListener('touchend',Scrolls.on_mouseup)
+		window.addEventListener('touchstart',Scrolls.on_mousedown)
+		window.addEventListener('touchmove',Scrolls.on_mousemove)
 		this.element = $('#canvas')[0]
 		this.canvas = this.element.getContext('2d');
 		$C = this.canvas
-		this.width = 1024//document.width
-		this.height = 768//document.height
+		this.width = 1000//$('body').width
+		this.height = 500//$('body').height
 		this.element.width = this.width+"px"
 		this.element.height = this.height+"px"
 		this.element.width = this.width
@@ -23,42 +25,50 @@ Scrolls = {
 	},
 	draw: function() {
 		var stripwidth = 4
-		for (i=0;i<Scrolls.width;i++) {
-			pixels = $C.getImageData(i+1,0,stripwidth,Scrolls.height)
-			$C.putImageData(pixels,i,0)
+		if (false){//!this.mousedown) {
+			for (i=0;i<Scrolls.width;i++) {
+				pixels = $C.getImageData(i+1,0,stripwidth,Scrolls.height)
+				$C.putImageData(pixels,i,0)
+			}
+		this.x_offset += stripwidth
 		}
-		this.x_offset += 1
 	},
 	on_mouseup: function(e) {
-		self.mousedown = false
-		self.pointer_x = false
-		self.pointer_y = false
-		Scrolls.send
+		e.preventDefault()
+		Scrolls.mousedown = false
+		Scrolls.pointer_x = false
+		Scrolls.pointer_y = false
+		//Scrolls.send()
 	},
 	on_mousedown: function(e) {
-		self.mousedown = true
+		e.preventDefault()
+		Scrolls.mousedown = true
 	},
 	on_mousemove: function(e) {
-		self.old_x = self.pointer_x
-		self.old_y = self.pointer_y
+		e.preventDefault()
+		e.stopPropagation();
+		Scrolls.old_x = Scrolls.pointer_x
+		Scrolls.old_y = Scrolls.pointer_y
 
-		if (self.mousedown) {
+		if (Scrolls.mousedown) {
 			$C.strokeStyle = "#000"
 			$C.lineWidth = 2
 			if (e.touches && (e.touches[0] || e.changedTouches[0])) {
 				var touch = e.touches[0] || e.changedTouches[0];
-				self.pointer_x = touch.pageX
-				self.pointer_y = touch.pageY
+				Scrolls.pointer_x = touch.pageX
+				Scrolls.pointer_y = touch.pageY
 			} else {
-				self.pointer_x = e.pageX
-				self.pointer_y = e.pageY
+				Scrolls.pointer_x = e.pageX
+				Scrolls.pointer_y = e.pageY
 			}
 			$C.beginPath()
-			if (self.old_x) $C.moveTo(self.old_x,self.old_y)
-		else $C.moveTo(self.pointer_x,self.pointer_y)
-			$C.lineTo(self.pointer_x,self.pointer_y)
+			if (Scrolls.old_x) $C.moveTo(Scrolls.old_x,Scrolls.old_y)
+			else $C.moveTo(Scrolls.pointer_x,Scrolls.pointer_y)
+			$C.lineTo(Scrolls.pointer_x,Scrolls.pointer_y)
 			$C.stroke()
 		}
+                $('#cursor').css('top',(Scrolls.pointer_y-4))
+                $('#cursor').css('left',(Scrolls.pointer_x-4))
 	},
 	// fetch latest online canvas
 	update: function() {
@@ -71,7 +81,7 @@ Scrolls = {
 
 		//options hash with params (dataUrl)
 	},
-	newest_panel: function() {
+	get_panel: function(panel_id) {
 		var x = Scrolls.width-100
 		var dataUrl = Scrolls.excerptCanvas(x,0,100,Scrolls.height,Scrolls.canvas)
 		console.log(dataUrl)
