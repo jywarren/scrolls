@@ -2,9 +2,13 @@
 
 <h1>Scrolls</h1>
 
+<div id="scrolls">
+
 <% @scrolls.each do |scroll| %>
-<div class="scroll"><a href="/scrolls/show/<%= scroll.id %>"><%= scroll.name %></a></div>
+<div class="scroll"><a href="/scrolls/show/<%= scroll.id %>"><%= scroll.name %></a> (<%= scroll.panels.length %> panels)</div>
 <% end %>
+
+</div>
 
 <form id="new" method="post" action="/scrolls/create">
 

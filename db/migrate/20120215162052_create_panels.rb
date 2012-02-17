@@ -3,6 +3,7 @@ class CreatePanels < ActiveRecord::Migration
     create_table :panels do |t|
 
 	t.integer :scroll_id, :default => 0, :null => false
+	t.integer :panel_id, :default => 0, :null => false
 	t.text :image_data, :default => "", :null => false, :limit => 4294967295
 
       t.timestamps

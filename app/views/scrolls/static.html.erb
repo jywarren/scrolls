@@ -1,5 +1,6 @@
-<body style="width:<%= (@scroll.panels.length)*100 %>px">
-<% @scroll.panels.each do |panel| %>
-<img src="<%= panel.data_url %>" />
-<% end %>
+<style>
+</style>
+
+<body style="width:<%= (@panels.length)*100 %>px">
+<% @panels.each do |panel| %><img src="<%= panel.image_data %>" /><% end %>
 </body>

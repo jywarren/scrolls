@@ -38,7 +38,7 @@ Scrolls = {
 		Scrolls.mousedown = false
 		Scrolls.pointer_x = false
 		Scrolls.pointer_y = false
-		//Scrolls.send()
+		Scrolls.save()
 	},
 	on_mousedown: function(e) {
 		e.preventDefault()
@@ -75,21 +75,21 @@ Scrolls = {
 		// we can skip this for single-user mode
 	},
 	save: function() {
-		var url = "/scrolls/save/"+Page.scroll_id
-		// this isn't right... gotta parse the response and dump it into the pixel buffer
-		$("#result").html(ajax_load).load(url)
-
-		//options hash with params (dataUrl)
+		for (var i = 0;i < (Scrolls.width/100);i++) {
+			$.ajax({
+				url: "/scrolls/save/"+Page.scroll_id,
+				data: {
+					panel_id: i,
+					data_url: Scrolls.excerpt(i*100,100)
+				},
+				success: function(){
+					console.log("uploaded")
+				}
+			})
+		}
 	},
-	get_panel: function(panel_id) {
-		var x = Scrolls.width-100
-		var dataUrl = Scrolls.excerptCanvas(x,0,100,Scrolls.height,Scrolls.canvas)
-		console.log(dataUrl)
-		// pixels = $C.getImageData(x,y,1,1).data
-		//pixels.data[0] = Clash.colors[Clash.color][0]
-		//pixels.data[1] = Clash.colors[Clash.color][1]
-		//pixels.data[2] = Clash.colors[Clash.color][2]
-		//$C.putImageData(pixels,x,y)
+	excerpt: function(x,width) {
+		return Scrolls.excerptCanvas(x,0,x+width,Scrolls.height,Scrolls.canvas)
 	},
 	/**
 	 * Returns a dataURL string of any rect from the offered canvas
@@ -102,27 +102,8 @@ Scrolls = {
 		element.width = width
 		element.height = height
 		var excerptCanvasContext = element.getContext('2d')
-		// dumb but effective: just copy every pixel in
-		var outputdata = excerptCanvasContext.getImageData(0,0,width,height)
 		var sourcedata = source.getImageData(x1,y1,width,height)
-		var l = sourcedata.data.length/4
-		for (var i = 0; i < l; i++) {
-			var red = sourcedata.data[i * 4 + 0];
-			var green = sourcedata.data[i * 4 + 1];
-			var blue = sourcedata.data[i * 4 + 2];
-			var alpha = sourcedata.data[i * 4 + 3];
-			outputdata[i * 4 + 0] = red
-			outputdata[i * 4 + 1] = green
-			outputdata[i * 4 + 2] = blue
-			outputdata[i * 4 + 3] = alpha
-		}
-		excerptCanvasContext.putImageData(outputdata,0,0)
-
-		//      for (i=0;i<sourcedata.length;i++) {
-		//	      var value = sourcedata[i]
-		//	      var red = value[0], green = value[1], blue = value[2], alpha = value[3]
-		//	      excerptCanvasContext.putImageData([red,green,blue,alpha],x1,y1)
-		//      }
+		excerptCanvasContext.putImageData(sourcedata,0,0)
 		return excerptCanvasContext.canvas.toDataURL()
 	}
 

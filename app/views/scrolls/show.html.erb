@@ -3,11 +3,11 @@
 		Page = {
 			width: 1000,
 			scroll_id: <%= @scroll.id %>,
-			<% if @scroll.panels.length > 0 %>
-			starting_x: <%= @scroll.panels.last.id %>*100-Page.width // should be the current leading edge minus the canvas width
-			<% else %>
-			starting_x: 0
-			<% end %>
+		<% if @scroll.panels.length > 0 %>
+			latest_panel: <%= @scroll.panels.last.id %>
+		<% else %>
+			latest_panel: 0
+		<% end %>
 		}
 	</script>
 	<style>
