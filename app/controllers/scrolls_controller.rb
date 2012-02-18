@@ -43,6 +43,12 @@ class ScrollsController < ApplicationController
 		@panels = Panel.find_all_by_scroll_id(params[:id],:order => "panel_id")
 	end
 
+	# get all panels and display as a mural, keeping up to date
+	def live
+		@scroll = Scroll.find(params[:id])
+		@panels = Panel.find_all_by_scroll_id(params[:id],:order => "panel_id DESC",:limit => 10)
+	end
+
 	# display panel x
 	def panel
 		@panel = Panel.find(:first, :conditions => {:scroll_id => params[:id],:panel_id => params[:panel_id]}) 

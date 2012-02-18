@@ -5,10 +5,15 @@
 <div id="scrolls">
 
 <% @scrolls.each do |scroll| %>
-<div class="scroll"><a href="/scrolls/show/<%= scroll.id %>"><%= scroll.name %></a> (<%= scroll.panels.length %> panels)</div>
+<div class="scroll">
+	<a href="/scrolls/show/<%= scroll.id %>"><%= scroll.name %></a> (<%= scroll.panels.length %> panels)
+	<a href="/scrolls/live/<%= scroll.id %>">Live display</a>
+</div>
 <% end %>
 
 </div>
+
+<hr />
 
 <form id="new" method="post" action="/scrolls/create">
 
