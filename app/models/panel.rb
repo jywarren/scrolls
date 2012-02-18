@@ -7,7 +7,12 @@ class Panel < ActiveRecord::Base
 	end
 
 	def data_url
-		"data:image/png;base64,"+self.image_data
+		#"data:image/png;base64,"+self.image_data
+		self.image_data
+	end
+
+	def data_url=(d)
+		self.image_data = d
 	end
 
 end
