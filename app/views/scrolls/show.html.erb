@@ -1,24 +1,41 @@
-<body onload="Scrolls.initialize()">
-	<script>
-		Page = {
-			width: 1000,
-			scroll_id: <%= @scroll.id %>,
-		<% if @scroll.panels.length > 0 %>
-			latest_panel: <%= @scroll.panels.last.id %>
-		<% else %>
-			latest_panel: 0
-		<% end %>
-		}
-	</script>
-	<style>
-		html {background:#000;}
-		body {margin:0;}
-		#canvas {background:#fff;width:1000px;height:500px;}
-		#cursor {background:red;width:10px;height:10px;position:absolute;}
-	</style>
+<script>
+	$(document).ready(Scrolls.initialize)
+	Page = {
+		width: 1000,
+		scroll_id: <%= @scroll.id %>,
+	<% if @scroll.panels.length > 0 %>
+		latest_panel: <%= @scroll.panels.last.panel_id %>,
+		first_panel: <%= @scroll.panels.first.panel_id %>
+	<% else %>
+		latest_panel: 10
+		first_panel: 0
+	<% end %>
+	}
+</script>
+<style>
+	html {background:#000;}
+	body {margin:0;}
+	#canvas {background:none;width:1000px;height:500px;position:absolute;top:0;left:0;z-index:2;}
+	#cursor {background:red;width:10px;height:10px;position:absolute;z-index:3}
+	#backdrop {
+		background:white;
+		width:1000px;
+		height:500px;
+		position:absolute; top:0; left:0;
+		z-index:1;
+	}
+	#canvas {
+		-moz-opacity: 0.8;
+		opacity:.8;
+		filter:alpha(opacity=80);
+	}
+</style>
 
-	<div id="cursor"></div>
+<div id="cursor"></div>
+<div id="backdrop">
+<% @panels.each do |panel| %><img src="<%= panel.image_data %>" /><% end %>
+</div>
 
-	<canvas id="canvas" width="1024" height="768"></canvas>
+<canvas id="canvas" width="1024" height="768"></canvas>
 
-</body>
+<a style="display:none;" id="advance" href="javascript:void(0);" onClick="Scrolls.advance()">Advance</a>

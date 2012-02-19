@@ -5,22 +5,22 @@ Scrolls = {
 	pointer_y: 0,
 	x_offset: 0,
 	initialize: function() {
-		this.element = $('#canvas')
+		Scrolls.element = $('#canvas')
 		$('body').mouseup(Scrolls.on_mouseup)
 		$('body').mousedown(Scrolls.on_mousedown)
 		$('body').mousemove(Scrolls.on_mousemove)
 		window.addEventListener('touchend',Scrolls.on_mouseup)
 		window.addEventListener('touchstart',Scrolls.on_mousedown)
 		window.addEventListener('touchmove',Scrolls.on_mousemove)
-		this.element = $('#canvas')[0]
-		this.canvas = this.element.getContext('2d');
-		$C = this.canvas
-		this.width = 1000//$('body').width
-		this.height = 500//$('body').height
-		this.element.width = this.width+"px"
-		this.element.height = this.height+"px"
-		this.element.width = this.width
-		this.element.height = this.height
+		Scrolls.element = $('#canvas')[0]
+		Scrolls.canvas = Scrolls.element.getContext('2d');
+		$C = Scrolls.canvas
+		Scrolls.width = 1000//$('body').width
+		Scrolls.height = 500//$('body').height
+		Scrolls.element.width = Scrolls.width+"px"
+		Scrolls.element.height = Scrolls.height+"px"
+		Scrolls.element.width = Scrolls.width
+		Scrolls.element.height = Scrolls.height
 		setInterval(Scrolls.draw,1500)
 	},
 	draw: function() {
@@ -70,23 +70,36 @@ Scrolls = {
                 $('#cursor').css('top',(Scrolls.pointer_y-4))
                 $('#cursor').css('left',(Scrolls.pointer_x-4))
 	},
-	// fetch latest online canvas
-	update: function() {
-		// we can skip this for single-user mode
-	},
+	// save panels
 	save: function() {
+		var panels = []
 		for (var i = 0;i < (Scrolls.width/100);i++) {
-			$.ajax({
-				url: "/scrolls/save/"+Page.scroll_id,
-				data: {
-					panel_id: i,
-					data_url: Scrolls.excerpt(i*100,100)
-				},
-				success: function(){
-					console.log("uploaded")
-				}
-			})
+			panels.push({panel_id: Page.first_panel+1+i,data_url: Scrolls.excerpt(i*100,100)})
 		}
+		$.post("/scrolls/save/"+Page.scroll_id,
+			{
+				panels:JSON.stringify(panels)
+			},
+			function(data){
+				$('#backdrop').html(data)
+				Scrolls.canvas.clearRect(0, 0, Scrolls.width, Scrolls.height)
+				$("#advance")[0].show()
+			})
+	},
+	// update backdrop
+	update: function() {
+		// /scrolls/window/1?panel_id=2
+	},
+	// advance the scroll; create a new panel
+	advance: function() {
+		$.ajax({
+			url:"/scrolls/advance/"+Page.scroll_id,
+			success: function(data) {
+				$('#backdrop').html(data)
+				Scrolls.first_panel += 1
+				Scrolls.last_panel += 1
+			} 
+		})
 	},
 	excerpt: function(x,width) {
 		return Scrolls.excerptCanvas(x,0,x+width,Scrolls.height,Scrolls.canvas)
